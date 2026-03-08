@@ -3,6 +3,7 @@ package application;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Scanner;
 
 import model.dao.DaoFactory;
 import model.dao.SellerDao;
@@ -13,6 +14,7 @@ public class Program {
 
 	public static void main(String[] args) {
 		
+		Scanner sc = new Scanner(System.in);
 		SellerDao sellerDao = DaoFactory.createSellerDao();
 		
 		System.out.println("Teste: seller findById: ");
@@ -46,5 +48,13 @@ public class Program {
 		seller.setName("Martha Wayne");
 		seller.setEmail("martha@gmail.com");
 		sellerDao.update(seller);
+		
+		System.out.println("=====================================");
+		System.out.println("Teste: seller delete: ");
+		System.out.println("Informe o ID do vendedor para exclusão: ");
+		int id = sc.nextInt();
+		sellerDao.deleteById(id);
+		sc.close();
+		
 	}
 }
