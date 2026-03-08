@@ -1,5 +1,7 @@
 package application;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import model.dao.DaoFactory;
@@ -31,5 +33,11 @@ public class Program {
 		for(Seller x : sellerList) {
 			System.out.println(x);
 		}
+		
+		System.out.println("=====================================");
+		System.out.println("Teste: seller insert: ");
+		Seller newSeller = new Seller(null, "Greg", "greg@gmail.com", LocalDate.parse("19/02/2001", DateTimeFormatter.ofPattern("dd/MM/yyyy")), 4000.00, dep);
+		sellerDao.insert(newSeller);
+		System.out.println("Id do novo vendedor: " + newSeller.getId());
 	}
 }

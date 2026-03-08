@@ -1,15 +1,19 @@
 package model.dao.impl;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import db.DB;
+import db.DBException;
 import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
@@ -24,7 +28,39 @@ public class SellerDaoJDBC implements SellerDao{
 
 	@Override
 	public void insert(Seller sel) {
-		// TODO Auto-generated method stub
+		PreparedStatement ps = null;
+	
+		try {
+			ps = conn.prepareStatement("INSERT INTO seller (seller_name, email, birthDate, baseSalary, department_id)"
+					+ "	VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, sel.getName());
+			ps.setString(2, sel.getEmail());
+			ps.setDate(3, Date.valueOf(sel.getBirthDate()));
+			ps.setBigDecimal(4, BigDecimal.valueOf(sel.getBaseSalary()));
+			ps.setInt(5, sel.getDepartment().getId());
+			
+			int rows = ps.executeUpdate();
+			
+			if(rows > 0) {
+				ResultSet rs = null;
+				rs = ps.getGeneratedKeys();
+				if(rs.next()) {
+					int id = rs.getInt(1);
+					sel.setId(id);
+				}
+				DB.closeResultSet(rs);
+			}
+			else {
+				throw new DBException("Erro de inserção.");
+			}
+			
+		}
+		catch(SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			DB.closePreparedStatement(ps);
+		}
 		
 	}
 
@@ -123,6 +159,10 @@ public class SellerDaoJDBC implements SellerDao{
 			e.printStackTrace();
 			return null;
 		}
+		finally {
+			DB.closeResultSet(rs);
+			DB.closePreparedStatement(ps);
+		}
 	}
 
 	@Override
@@ -158,6 +198,10 @@ public class SellerDaoJDBC implements SellerDao{
 		catch(SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+		finally {
+			DB.closeResultSet(rs);
+			DB.closePreparedStatement(ps);
 		}
 	}
 
